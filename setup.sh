@@ -31,6 +31,11 @@ elif command -v zypper &> /dev/null; then
     DISTRO="opensuse"
     info "openSUSE detected. Installing base dependencies..."
     sudo zypper install -y git make jq awk gum
+elif command -v apt-get &> /dev/null; then
+    DISTRO="debian"
+    info "Debian detected. Installing base dependencies..."
+    sudo DEBIAN_FRONTEND=noninteractive apt-get update
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y git make jq gawk gum
 else
     error "Unsupported distribution. Please install git, make, wak, gum, and jq manually."
 fi
