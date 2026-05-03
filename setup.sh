@@ -45,7 +45,7 @@ TEMP_DIR=$(mktemp -d -t ml4w-dotfiles-settings-XXXXXX)
 info "Cloning ML4W Dotfiles Settings into $TEMP_DIR..."
 
 # 3. Clone and Install the App
-git clone --depth=1 https://github.com/mylinuxforwork/ml4w-dotfiles-settings.git "$TEMP_DIR"
+git clone --depth=1 https://github.com/thywyn/ml4w-dotfiles-settings.git "$TEMP_DIR"
 cd "$TEMP_DIR"
 
 info "Installing ML4W Dotfiles Settings to ~/.local/bin..."
