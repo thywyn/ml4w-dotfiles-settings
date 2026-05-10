@@ -35,9 +35,9 @@ elif command -v apt-get &> /dev/null; then
     DISTRO="debian"
     info "Debian detected. Installing base dependencies..."
     sudo DEBIAN_FRONTEND=noninteractive apt-get update
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y git make jq gawk gum
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y git make jq gawk gum
 else
-    error "Unsupported distribution. Please install git, make, wak, gum, and jq manually."
+    error "Unsupported distribution. Please install git, make, awk, gum, and jq manually."
 fi
 
 # 2. Prepare Temporary Folder
