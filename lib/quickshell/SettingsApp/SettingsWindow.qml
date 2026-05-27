@@ -204,7 +204,13 @@ FloatingWindow {
                                     running: modelData.type === "files" || modelData.type === "folders"
                                     command: {
                                         if (modelData.type === "files") {
-                                            return ["bash", "-c", "ls -1p " + modelData.folder + " 2>/dev/null | grep -v / || true"]
+                                            var cmd = "ls -1p " + modelData.folder + " 2>/dev/null | grep -v /";
+                                            if (modelData.filetypes) {
+                                                var pattern = modelData.filetypes.replace(/\./g, "\\.").replace(/,/g, "|");
+                                                cmd += " | grep -E '(" + pattern + ")$'";
+                                            }
+                                            cmd += " || true";
+                                            return ["bash", "-c", cmd];
                                         } else if (modelData.type === "folders") {
                                             return ["bash", "-c", "ls -1p " + modelData.folder + " 2>/dev/null | grep / | sed 's|/$||' || true"]
                                         }
