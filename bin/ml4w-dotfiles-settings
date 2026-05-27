@@ -183,6 +183,11 @@ if [[ "$ACTION" == "set" || "$ACTION" == "get" ]]; then
         
         exact_val="$current_val"
         if [[ "$match" == *".*"* ]]; then
+            export AWK_MATCH="$match"
+            matched_part=$(echo "$current_val" | awk 'match($0, ENVIRON["AWK_MATCH"]) { print substr($0, RSTART, RLENGTH); exit }')
+            if [[ -n "$matched_part" ]]; then
+                exact_val="$matched_part"
+            fi
             prefix="${match%%\.\**}"
             suffix="${match#*\.\*}"
             exact_val="${exact_val#"$prefix"}"
@@ -256,6 +261,11 @@ while true; do
         # Dynamically extract exact value by stripping the literal match prefix and suffix
         exact_val="$current_val"
         if [[ "$match" == *".*"* ]]; then
+            export AWK_MATCH="$match"
+            matched_part=$(echo "$current_val" | awk 'match($0, ENVIRON["AWK_MATCH"]) { print substr($0, RSTART, RLENGTH); exit }')
+            if [[ -n "$matched_part" ]]; then
+                exact_val="$matched_part"
+            fi
             prefix="${match%%\.\**}"
             suffix="${match#*\.\*}"
             exact_val="${exact_val#"$prefix"}"
