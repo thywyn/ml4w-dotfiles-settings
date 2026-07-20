@@ -183,6 +183,11 @@ if [[ "$ACTION" == "set" || "$ACTION" == "get" ]]; then
         
         exact_val="$current_val"
         if [[ "$match" == *".*"* ]]; then
+            export AWK_MATCH="$match"
+            matched_part=$(echo "$current_val" | awk 'match($0, ENVIRON["AWK_MATCH"]) { print substr($0, RSTART, RLENGTH); exit }')
+            if [[ -n "$matched_part" ]]; then
+                exact_val="$matched_part"
+            fi
             prefix="${match%%\.\**}"
             suffix="${match#*\.\*}"
             exact_val="${exact_val#"$prefix"}"
@@ -239,6 +244,7 @@ while true; do
         default=$(echo "$item_json" | jq -r '.default // ""')
         folder=$(echo "$item_json" | jq -r '.folder // ""')
         post_command=$(echo "$item_json" | jq -r '.post_command // ""')
+        filetypes=$(echo "$item_json" | jq -r '.filetypes // ""')
         
         # Safely fetch true/false values, defaulting to "true" and "false"
         true_value=$(echo "$item_json" | jq -r 'if has("true_value") then .true_value else "true" end')
@@ -255,6 +261,11 @@ while true; do
         # Dynamically extract exact value by stripping the literal match prefix and suffix
         exact_val="$current_val"
         if [[ "$match" == *".*"* ]]; then
+            export AWK_MATCH="$match"
+            matched_part=$(echo "$current_val" | awk 'match($0, ENVIRON["AWK_MATCH"]) { print substr($0, RSTART, RLENGTH); exit }')
+            if [[ -n "$matched_part" ]]; then
+                exact_val="$matched_part"
+            fi
             prefix="${match%%\.\**}"
             suffix="${match#*\.\*}"
             exact_val="${exact_val#"$prefix"}"
@@ -302,6 +313,10 @@ while true; do
                 if [[ -d "$expanded_folder" ]]; then
                     # List files, exclude directories
                     items=$(ls -1p "$expanded_folder" | grep -v /)
+                    if [[ -n "$filetypes" ]]; then
+                        regex_pat=$(echo "$filetypes" | sed 's/\./\\./g' | sed 's/,/|/g')
+                        items=$(echo "$items" | grep -E "($regex_pat)$")
+                    fi
                     if [[ -n "$items" ]]; then
                         # Bump exact match to the top
                         if echo "$items" | grep -Fqx "$exact_val"; then
